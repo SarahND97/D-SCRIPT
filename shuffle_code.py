@@ -30,10 +30,10 @@ def main(args):
     split_data = data.split("/")
 
     # Check that the file is a tsv-file
-    if not data.endswith('.tsv') or not data.endswith('.fasta') :
+    if not data.endswith('.tsv') or not data.endswith('.fasta'):
         return "Please input  a tsv- or fasta-file"
    
-    if data.endswith('.tsv')
+    if data.endswith('.tsv'):
         df = pd.read_table(data,header=None)
         df_copy = df.copy()
         df = shuffle(df_copy, random_state=seed)
