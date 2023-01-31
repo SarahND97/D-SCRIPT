@@ -1,0 +1,12 @@
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/debug/deps/kstring-917076664aff1d26.rmeta: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/stack.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_cow.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_ref.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/backend.rs
+
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/debug/deps/libkstring-917076664aff1d26.rlib: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/stack.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_cow.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_ref.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/backend.rs
+
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/debug/deps/kstring-917076664aff1d26.d: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/stack.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_cow.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_ref.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/backend.rs
+
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/lib.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/stack.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_cow.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/string_ref.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/kstring-2.0.0/src/backend.rs:

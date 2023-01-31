@@ -1,0 +1,11 @@
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/release/deps/cargo_metadata-f7dfa3cb861e1a79.rmeta: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/release/deps/libcargo_metadata-f7dfa3cb861e1a79.rlib: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/sarahnd/Documents/D-script_project/D-SCRIPT/hello_cargo/target/release/deps/cargo_metadata-f7dfa3cb861e1a79.d: /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs /home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs
+
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/lib.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/dependency.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/diagnostic.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/errors.rs:
+/home/sarahnd/.cargo/registry/src/github.com-1ecc6299db9ec823/cargo_metadata-0.15.2/src/messages.rs:
