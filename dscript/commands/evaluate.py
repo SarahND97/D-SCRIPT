@@ -22,6 +22,8 @@ from sklearn.metrics import (
 )
 from tqdm import tqdm
 import torch
+import gc
+
 
 
 from dscript.utils import log, load_hdf5_parallel
@@ -177,6 +179,8 @@ def main(args):
                 labels.append(label)
                 outFile.write(f"{n0}\t{n1}\t{label}\t{pred:.5}\n")
                 torch.cuda.empty_cache()
+                del variables
+                gc.collect()
 
             except Exception as e:
                 sys.stderr.write("{} x {} - {}".format(n0, n1, e))
