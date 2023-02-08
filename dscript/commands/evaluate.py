@@ -21,6 +21,8 @@ from sklearn.metrics import (
     roc_curve,
 )
 from tqdm import tqdm
+import torch
+
 
 from dscript.utils import log, load_hdf5_parallel
 
@@ -174,6 +176,8 @@ def main(args):
                 phats.append(pred)
                 labels.append(label)
                 outFile.write(f"{n0}\t{n1}\t{label}\t{pred:.5}\n")
+                torch.cuda.empty_cache()
+
             except Exception as e:
                 sys.stderr.write("{} x {} - {}".format(n0, n1, e))
 
