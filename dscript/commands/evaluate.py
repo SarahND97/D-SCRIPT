@@ -19,6 +19,9 @@ from sklearn.metrics import (
     precision_recall_curve,
     roc_auc_score,
     roc_curve,
+    accuracy_score, 
+    precision_score, 
+    recall_score
 )
 from tqdm import tqdm
 import torch
@@ -191,9 +194,21 @@ def main(args):
     with open(outPath + "_metrics.txt", "w+") as f:
         aupr = average_precision_score(labels, phats)
         auroc = roc_auc_score(labels, phats)
-
+        
         log(f"AUPR: {aupr}", file=f)
         log(f"AUROC: {auroc}", file=f)
+        # calculate accuracy, precision, recall, assume that 0.5 is cuttof, above=interaction, below=not interacting
+        pred_cutoff = [1.0 if p>0.50 else 0 for p in phats]
+        acc = accuracy_score(labels, pred_cutoff)
+        recall = recall_score(labels, pred_cutoff)
+        precision = precision_score(labels, pred_cutoff)
+
+        log(f"accuracy: {acc}", file=f)
+        log(f"recall: {recall}", file=f)
+        log(f"precision: {precision}", file=f) 
+        
+        
+
 
     plot_eval_predictions(labels, phats, outPath)
 
