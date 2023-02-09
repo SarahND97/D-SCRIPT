@@ -206,9 +206,9 @@ def main(args):
         log(f"accuracy: {acc}", file=f)
         log(f"recall: {recall}", file=f)
         log(f"precision: {precision}", file=f) 
-        
-        
-
+        print("accuracy: ", acc)
+        print("precision: ", precision)
+        print("recall: ", recall)
 
     plot_eval_predictions(labels, phats, outPath)
 
