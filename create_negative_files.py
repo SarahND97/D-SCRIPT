@@ -20,6 +20,12 @@ def add_args(parser):
     parser.add_argument("--o", help="Choose where to store the output files", default=None)
     return parser
 
+
+def get_subbatch_size(L):
+  if L <  800: return 800
+  if L < 1000: return 200
+  return 150
+
 def main(args):
     """
     Shuffle data stated by user 
@@ -37,8 +43,9 @@ def main(args):
     df = pd.read_table(shuffled_pairs,header=None)
     df_1_copy = copy.deepcopy(df)
     files = os.listdir(datadir)
+    subbatch_sizes = []
+    
     # : lists all fasta-files in dir
-    i = 0
     for index, row in df_1_copy.iterrows():
         output = ""
         outfile = ""
@@ -53,28 +60,17 @@ def main(args):
                 output = output+contents[2]+contents[3]
         
         outfile = outdir + str(row[0][:-2]) + "_" + str(row[1][:-2]) + ".fasta"
-        f = open(outfile, "a")
+        f = open(outfile, "w")
         f.write(output)
         f.close()
-        # SeqIO.write(output, outfile, "fasta")
-        
-
-      
-    
-    
-    
-    
-    
-    # if output_path is None:
-    #     output_path = "shuffled_"+split_data[-1]
-    # df1=pd.DataFrame({"0": df[0], "1": df_1_copy, "2": np.zeros(len(df_1_copy))})
-    # df2=pd.DataFrame({"0": df[0], "1": df[1], "2": df[2]})
-    # df = pd.concat([df1,df2])  
-    # df.to_csv(path_or_buf=output_path, sep='\t', header=False, index=False)
-    
-    
-    
-    # 
+    # files = os.listdir(datadir)
+    # for file_ in files:
+    #     with open(datadir+file_) as f: contents = f.readlines()
+    #     sequence = contents[1][:-1]
+    #     seqs = sequence.split(":")
+    #     lengths = [len(s) for s in seqs]
+    #     subbatch_size = get_subbatch_size(sum(lengths))
+        # SeqIO.write(output, outfile, "fasta") 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
