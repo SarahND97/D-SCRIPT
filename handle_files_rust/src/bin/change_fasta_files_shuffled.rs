@@ -26,20 +26,30 @@ fn main(){
             let shuffled_line = shuffled_line.unwrap();
             let mut parts = shuffled_line.split_whitespace();
             parts.next_back();
-            
+            // let mut line_number = 0;
             for part in parts {
                 // println!("{}",part);
                 // your_path.as_path().display().to_string()
-                let mut temp_part =  rem_two_last(&part);;
-                for entry in fs::read_dir(dir_).unwrap() {
+                let mut temp_part = rem_two_last(&part);
+                for mut entry in fs::read_dir(dir_).unwrap() {
                     // .as_ref().unwrap()
-                    println!("{:?}",entry.unwrap().path().file_stem());//.display().to_string());
-                    println!("{}",temp_part);
-                    if entry.unwrap().path().file_stem() == temp_part {
-                        println!("{}", "hej")
+                    // println!("{:?}",entry.unwrap().path().file_stem());//.display().to_string());
+                    // println!("{}",temp_part);
+                    // reference.map(str::to_string)
+                    // entry.unwrap().path().file_stem().as_str()
+                    if  entry.unwrap().path().file_stem().unwrap().to_str() == Some(temp_part) {
+                        // part includes the chain
+                        // println!("{}",line_number);
+                        println!("{}",shuffled_line);
+                        println!("{}",part);
+                        // TODO: find the correct fasta_files and the correct chains 
+                        // merge them together in a new fasta_file that can be analyzes by omegafold
+                        
                     }
-                }    
+                }
+                // line_number = line_number + 1;    
             }
+            
         }
     }
     //
