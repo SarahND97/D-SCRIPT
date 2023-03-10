@@ -9,6 +9,7 @@ fn main(){
     // gather cmd arguments
     let args: Vec<String> = env::args().collect();
     let dir_: &String = &args[1];
+    let ourdir_: &String = &args[2];
     // this allows to open a file in file append mode to write (or create it)
     // let mut to_write_file = BufWriter::new(
     //     OpenOptions::new()
@@ -24,15 +25,17 @@ fn main(){
         if let Ok(lines) = read_lines(entry.unwrap().path()) {
             // Consumes the iterator, returns an (Optional) String
             let mut i = 0;
+            let mut title: String = "".to_owned();
             let mut input: String = "".to_owned();
             for line in lines {
                 if let Ok(ip) = line {
                     // println!("{}", ip);
                     if ip.starts_with('>') && i==0 {
                         let ip_title = rem_first_and_last(&ip);
-                        input.push_str(">");
-                        input.push_str(&ip_title);
-                        input.push_str("\n");   
+                        title.push_str(">");
+                        title.push_str(&ip_title);
+                        title.push_str("_");
+                        // input.push_str("\n");   
                         outfile.push_str(&ip_title);
                         outfile.push_str(".fasta");
                         // writeln!(to_write_file, "{}", input).unwrap();
@@ -40,7 +43,12 @@ fn main(){
                     else {
                         if i==1 {
                             input.push_str(&ip);
-                            input.push_str("/");
+                            input.push_str(":");
+                        }
+                        if i==2 {
+                            let ip_title = rem_first_and_last(&ip)
+                            title.push_str(ip)
+                            title.push_str("\n"); 
                         }
                         if i==3 {
                             input.push_str(&ip);
@@ -58,10 +66,10 @@ fn main(){
                 OpenOptions::new()
                 .append(true)
                 .create(true) // Optionally create
-                .open(outfile)
+                .open(ourdir_.to_owned()+&outfile)
                 .expect("Unable to open file"),
             );
-            writeln!(to_write_file, "{}", input).unwrap();
+            writeln!(to_write_file, "{}", title.push_str(input)).unwrap();
             // writeln!(to_write_file, "{}", input.to_string() + "\t" + "1.0").unwrap();
         }
     }
@@ -78,7 +86,7 @@ where P: AsRef<Path>, {
 fn rem_first_and_last(value: &str) -> &str {
     let mut chars = value.chars();
     chars.next();
-    chars.next_back();
-    chars.next_back();
+    // chars.next_back();
+    // chars.next_back();
     chars.as_str()
 }
