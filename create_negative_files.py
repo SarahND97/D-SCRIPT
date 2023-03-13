@@ -22,7 +22,7 @@ def add_args(parser):
 
 
 def get_subbatch_size(L):
-  if L <  800: return 800
+  if L <  500: return 500
   if L < 1000: return 200
   return 150
 
@@ -43,7 +43,7 @@ def main(args):
     df = pd.read_table(shuffled_pairs,header=None)
     df_1_copy = copy.deepcopy(df)
     files = os.listdir(datadir)
-    subbatch_sizes = []
+    # subbatch_sizes = []
     
     # : lists all fasta-files in dir
     for index, row in df_1_copy.iterrows():
@@ -64,13 +64,20 @@ def main(args):
         f.write(output)
         f.close()
     # files = os.listdir(datadir)
-    # for file_ in files:
-    #     with open(datadir+file_) as f: contents = f.readlines()
-    #     sequence = contents[1][:-1]
-    #     seqs = sequence.split(":")
-    #     lengths = [len(s) for s in seqs]
-    #     subbatch_size = get_subbatch_size(sum(lengths))
-        # SeqIO.write(output, outfile, "fasta") 
+    # f = open(outfile, "w")
+    # outfile = outdir + "subbatches_negative_new.txt"
+    # IDs = open("data/negative_samples_ID")
+    
+    # for line in IDs.readlines():
+    #     for file_ in files:
+    #         with open(datadir+file_) as f: contents = f.readlines()
+    #         sequence = contents[1][:-1]
+    #         seqs = sequence.split(":")
+    #         lengths = [len(s) for s in seqs]
+    #         subbatch_size = get_subbatch_size(sum(lengths))
+    #         f.write(str(subbatch_size)+"\n")
+    #         #SeqIO.write(output, outfile, "fasta") 
+    # f.close()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
