@@ -8,10 +8,16 @@ htmlcov
 **/.ipynb_checkpoints
 **/__pycache__
 dev*
+handle_files_rust/target
+data/old
+data/new_colabfold_data
+data/test_fasta
+results/human_test_7_2_seed_0
 
 # Files
 collect_env.py
 RUN_DSCRIPT.sh
+data/6hxt_OMF.fasta
 
 # File Types
 **/*.egg-info
