@@ -44,12 +44,6 @@ def main(args):
         random.Random(seed).shuffle(df_1_copy)
         if output_path is None:
             output_path = "shuffled_"+split_data[-1]
-        # for i in range(len(df_1_copy)):
-        #     df1 = pd.DataFrame({
-        #         "0": df[i],
-        #         "1": shuffled_column[i],
-        #         "2": 0.0
-        #     })
         df1=pd.DataFrame({"0": df[0], "1": df_1_copy, "2": np.zeros(len(df_1_copy))})
         df2=pd.DataFrame({"0": df[0], "1": df[1], "2": df[2]})
         df = pd.concat([df1,df2])  
