@@ -30,29 +30,40 @@ fn main(){
             for line in lines {
                 if let Ok(ip) = line {
                     // println!("{}", ip);
-                    if ip.starts_with('>') && i==0 {
+                    // if ip.starts_with('>') && i==0 {
+                    //     let ip_title = rem_first(&ip);
+                    //     title.push_str(">");
+                    //     title.push_str(&ip_title);
+                    //     title.push_str("_");
+                    //     title.push_str(&ip_title);
+                    //     title.push_str("\n");
+                    //     // input.push_str("\n");   
+                    //     // writeln!(to_write_file, "{}", input).unwrap();
+                    // }
+                    // else {
+                        // if i==1 {
+                        //     input.push_str(&ip);
+                        //     input.push_str(":");
+                        //     input.push_str(&ip);
+                        // }
+                    if ip.starts_with('>') && i==2 {
                         let ip_title = rem_first(&ip);
                         title.push_str(">");
                         title.push_str(&ip_title);
                         title.push_str("_");
+                        title.push_str(&ip_title);
+                        title.push_str("\n");
                         // input.push_str("\n");   
                         // writeln!(to_write_file, "{}", input).unwrap();
                     }
-                    else {
-                        if i==1 {
-                            input.push_str(&ip);
-                            input.push_str(":");
-                        }
-                        if i==2 {
-                            let ip_title = rem_first_and_last(&ip);
-                            title.push_str(&ip_title);
-                            title.push_str("\n");
-                        }
-                        if i==3 {
-                            input.push_str(&ip);
-                            //writeln!(to_write_file, "{}", input).unwrap()
-                        }
+                    if i==3 {
+                    //     input.push_str(&ip);
+                    //     //writeln!(to_write_file, "{}", input).unwrap()
+                        input.push_str(&ip);
+                        input.push_str(":");
+                        input.push_str(&ip);
                     }
+                //}
                     // if ip.starts_with('>') && i==2 {
                     //     let ip = rem_first_and_last(&ip);
                     //     input.push_str(ip);
@@ -67,7 +78,7 @@ fn main(){
                 OpenOptions::new()
                 .append(true)
                 .create(true) // Optionally create
-                .open(ourdir_.to_owned()+&outfile+"B"+".fasta")
+                .open(ourdir_.to_owned()+&outfile+".fasta")
                 .expect("Unable to open file"),
             );
             title.push_str(&input);

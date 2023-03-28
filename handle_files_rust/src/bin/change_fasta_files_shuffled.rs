@@ -27,6 +27,7 @@ fn main(){
             let mut parts = shuffled_line.split_whitespace();
             parts.next_back();
             // let mut line_number = 0;
+            let mut input: String = "".to_owned();
             for part in parts {
                 // println!("{}",part);
                 // your_path.as_path().display().to_string()
@@ -39,12 +40,29 @@ fn main(){
                     // entry.unwrap().path().file_stem().as_str()
                     if  entry.unwrap().path().file_stem().unwrap().to_str() == Some(temp_part) {
                         // part includes the chain
+                        // temp_part only includes protein-name
                         // println!("{}",line_number);
-                        println!("{}",shuffled_line);
-                        println!("{}",part);
+                        // println!("{}",shuffled_line);
+                        // println!("{}",part);
                         // TODO: find the correct fasta_files and the correct chains 
                         // merge them together in a new fasta_file that can be analyzes by omegafold
-                        
+                        if let Ok(fasta_file_contents) = read_lines(dir_.to_owned()+temp_part+".fasta") {
+                        // println!("{:?}",fasta_file_contents.nth(1));
+                            // let first_element = fasta_file_contents.nth(0).as_ref().map(<String, std::io::Error>::as_str).unwrap();
+                            println!("{}",fasta_file_contents.nth(1).unwrap().to_string());
+                            // for content in fasta_file_contents {
+                            //     if content.starts_with('>') {
+                            //         if rem_first(content)==part {
+                            //             input.push_str(">");
+                            //             input.push_str(&part);
+                            //             input.push_str("\n"); 
+                            //             // input.push_str(fasta_file_contents.nth(0));
+                            //             input.push_str("\n");       
+                            //         }
+                            //     }
+                            // }
+                        }
+                        // 
                     }
                 }
                 // line_number = line_number + 1;    
@@ -115,12 +133,24 @@ fn main(){
     // }
 }
 
+// impl fmt::Display for Result<String, std::io::Error> {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(f, "Circle of radius {}", self.radius)
+//     }
+// }
+
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
 fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
+}
+
+fn rem_first(value: &str) -> &str {
+    let mut chars = value.chars();
+    chars.next();
+    chars.as_str()
 }
 
 fn rem_first_and_last(value: &str) -> &str {
