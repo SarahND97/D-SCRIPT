@@ -13,11 +13,23 @@ data/old
 data/new_colabfold_data
 data/test_fasta
 results/human_test_7_2_seed_0
+data/negative_homomers_monomers
+size_separation_files/
 
 # Files
 collect_env.py
 RUN_DSCRIPT.sh
 data/6hxt_OMF.fasta
+change_fasta_files.py
+create_og_fasta_files.py
+predict_data_human
+dscript_all_results_copy.tsv
+negative_hete_missing_files.txt
+negative_homo_A_missing_files.txt
+negative_homo_B_missing_files.txt
+negative_samples_ID.txt
+positive_hete_missing_files.txt
+positive_homo__missing_files.txt
 
 # File Types
 **/*.egg-info
