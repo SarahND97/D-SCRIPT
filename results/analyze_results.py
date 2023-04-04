@@ -37,7 +37,7 @@ def main(args):
     # TODO: add column to .tsv-file that is 1 if result is above 0.5 and lower if lower than 0.5
     if command=="add_threshold":  
         df_copy[4] = np.where(df_copy[3]<0.5, 0, 1)
-        df_copy.to_csv(path_or_buf="threshold_"+split_data[-1], sep='\t', header=False, index=False)
+        df_copy.to_csv(path_or_buf=split_data[-1], sep='\t', header=False, index=False)
     else: 
         grouped = df_copy.groupby(df[2])
         df1 = grouped.get_group(0.0)
