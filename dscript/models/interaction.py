@@ -136,7 +136,7 @@ class ModelInteraction(nn.Module):
         else:
             return self.embedding(x)
 
-    def cpred(self, z0, z1):
+    def cpred(self, z0, z1, embed_msa=False, pssm_a=None, pssm_b=None):
         """
         Project down input language model embeddings into low dimension using projection module
 
@@ -149,11 +149,22 @@ class ModelInteraction(nn.Module):
         """
         e0 = self.embed(z0)
         e1 = self.embed(z1)
+
+        if embed_msa:
+            assert pssm_a is not None and pssm_b is not None
+            assert isinstance(pssm_a, torch.Tensor) and isinstance(pssm_b, torch.Tensor)
+            assert (z0.get_device() == pssm_a.get_device() and z0.get_device() == pssm_b.get_device())
+            assert pssm_a.shape[1] == z0.shape[1] and pssm_b.shape[1] == z1.shape[1]
+
+            # concatenate foldseek one hot embedding
+            e0 = torch.concat([e0, pssm_a], dim=2)
+            e1 = torch.concat([e1, pssm_b], dim=2)
+
         B = self.contact.cmap(e0, e1)
         C = self.contact.predict(B)
         return C
 
-    def map_predict(self, z0, z1):
+    def map_predict(self, z0, z1, embed_msa=False, pssm_a=None,pssm_b=None):
         """
         Project down input language model embeddings into low dimension using projection module
 
@@ -164,8 +175,16 @@ class ModelInteraction(nn.Module):
         :return: Predicted contact map, predicted probability of interaction :math:`(b \\times N \\times d_0), (1)`
         :rtype: torch.Tensor, torch.Tensor
         """
-
-        C = self.cpred(z0, z1)
+        if embed_msa:
+            assert pssm_a is not None and pssm_b is not None
+            assert isinstance(pssm_a, torch.Tensor) and isinstance(pssm_b, torch.Tensor)
+            assert (
+                z0.get_device() == pssm_a.get_device()
+                and z0.get_device() == pssm_b.get_device()
+            )
+            assert pssm_a.shape[1] == z0.shape[1] and pssm_b.shape[1] == z1.shape[1]
+            
+        C = self.cpred(z0, z1, embed_msa, pssm_a, pssm_b)
 
         if self.do_w:
             # Create contact weighting matrix
@@ -212,7 +231,7 @@ class ModelInteraction(nn.Module):
             phat = self.activation(phat)
         return C, phat
 
-    def predict(self, z0, z1):
+    def predict(self, z0, z1, embed_msa=False, pssm_a=None, pssm_b=None):
         """
         Project down input language model embeddings into low dimension using projection module
 
@@ -223,11 +242,11 @@ class ModelInteraction(nn.Module):
         :return: Predicted probability of interaction
         :rtype: torch.Tensor, torch.Tensor
         """
-        _, phat = self.map_predict(z0, z1)
+        _, phat = self.map_predict(z0, z1, embed_msa, pssm_a, pssm_b)
         return phat
 
-    def forward(self, z0, z1):
+    def forward(self, z0, z1, embed_msa=False, pssm_a=None, pssm_b=None):
         """
         :meta private:
         """
-        return self.predict(z0, z1)
+        return self.predict(z0, z1, embed_msa, pssm_a, pssm_b)

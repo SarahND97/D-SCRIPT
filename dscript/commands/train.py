@@ -1,7 +1,6 @@
 """
 Train a new model.
 """
-
 from __future__ import annotations
 import torch
 import torch.nn as nn
@@ -13,6 +12,7 @@ from tqdm import tqdm
 from typing import Callable, NamedTuple, Optional
 
 import sys
+import os
 import argparse
 import h5py
 import subprocess as sp
@@ -20,6 +20,8 @@ import numpy as np
 import pandas as pd
 import gzip as gz
 
+from ..a3m_to_pssm import get_pssm, pssm_columns
+from ..stockholm_reformat.stockholm_reformat import parse_a3m
 from .. import __version__
 from ..alphabets import Uniprot21
 from ..glider import glide_compute_map, glider_score
@@ -78,6 +80,7 @@ def add_args(parser):
     inter_grp = parser.add_argument_group("Interaction Module")
     train_grp = parser.add_argument_group("Training")
     misc_grp = parser.add_argument_group("Output and Device")
+    msa_grp = parser.add_argument_group("MSA related commands")
 
     # Data
     data_grp.add_argument(
@@ -154,6 +157,30 @@ def add_args(parser):
         help="size of max-pool in interaction model (default: 9)",
     )
 
+    # MSA
+    msa_grp.add_argument(
+        "--use_msa",
+        default=False,
+        help="Decide whether to add MSA-information for the predictions",
+    )
+    # TODO:
+    # IDEA: could just rename the msa to correspond to the correct protein, no need for a corresponding file, don't even need to rename, enough to just
+    # give folder of all msas and assume that it's there, print and see the name of the protein, start there
+    # question: need entire PSSM or only MSA1H? What's the difference? Test both?
+    # Look first for the desired PSSMs if not present, generate new ones
+    # If name with correct PSSM does not exist raise an error message
+    msa_grp.add_argument(
+        "--msa_location",
+        default=None,
+        help="Decide whether to add MSA-information for the predictions",
+    )
+
+    msa_grp.add_argument(
+        "--af_msa",
+        default=True,
+        help="Decide whether to add MSA-information for the predictions",
+    )
+
     # Training
     train_grp.add_argument(
         "--num-epochs",
@@ -228,7 +255,38 @@ def add_args(parser):
     return parser
 
 
-def predict_cmap_interaction(model, n0, n1, tensors, use_cuda):
+def generate_msas(msa_location, protein1, protein2):
+    msa_location_1 = msa_location + protein1[0] + "/msas/A/"
+    msa_location_2 = msa_location + protein2[0] + "/msas/A/"
+    # check if pssm already exists
+    if not os.path.isfile(msa_location_1 + "small_bfd_hits.pssm.pt"):
+        parse_a3m(
+            msa_location_1 + "small_bfd_hits.sto",
+            msa_location_1 + "small_bfd_hits.a3m",
+        )
+        get_pssm(
+            msa_location_1 + "small_bfd_hits.a3m",
+            msa_location_1 + "small_bfd_hits.pssm",
+        )
+    if not os.path.isfile(msa_location_2 + "small_bfd_hits.pssm.pt"):
+        parse_a3m(
+            msa_location_2 + "small_bfd_hits.sto",
+            msa_location_2 + "small_bfd_hits.a3m",
+        )
+        get_pssm(
+            msa_location_2 + "small_bfd_hits.a3m",
+            msa_location_2 + "small_bfd_hits.pssm",
+        )
+    pssm_a = torch.load(msa_location_1 + "small_bfd_hits.pssm.pt")
+    pssm_b = torch.load(msa_location_2 + "small_bfd_hits.pssm.pt")
+    pssm_a = torch.reshape(pssm_a, (1, pssm_a.shape[0], pssm_a.shape[1]))
+    pssm_b = torch.reshape(pssm_b, (1, pssm_b.shape[0], pssm_b.shape[1]))
+    return pssm_a, pssm_b
+
+
+def predict_cmap_interaction(
+    model, n0, n1, tensors, use_cuda, use_msa, add_first=True
+):
     """
     Predict whether a list of protein pairs will interact, as well as their contact map.
 
@@ -242,19 +300,45 @@ def predict_cmap_interaction(model, n0, n1, tensors, use_cuda):
     :type tensors: dict[str, torch.Tensor]
     :param use_cuda: Whether to use GPU
     :type use_cuda: bool
+    :param use_msa: whether to add one-hot encoding of MSAs
+    :type use_msa: list
     """
 
     b = len(n0)
 
     p_hat = []
     c_map_mag = []
-    for i in range(b):
+    for i in range(b):  # this is looping through all proteins in n0 and n1
         z_a = tensors[n0[i]]
         z_b = tensors[n1[i]]
         if use_cuda:
             z_a = z_a.cuda()
             z_b = z_b.cuda()
-        cm, ph = model.map_predict(z_a, z_b)
+        use_msa_bool = use_msa[0]
+        msa_location = use_msa[1]
+        af_msa_bool = use_msa[2]
+        if use_msa_bool:
+            if af_msa_bool:
+                protein_1 = n0[i].split("_")
+                protein_2 = n1[i].split("_")
+                # for heteromers add if-statement here that checks if multiple msas exist and use the corresponding one
+                pssm_a, pssm_b = generate_msas(
+                    msa_location, protein_1, protein_2
+                )
+                # TODO:
+                if use_cuda:
+                    pssm_a = pssm_a.cuda()
+                    pssm_b = pssm_b.cuda()
+
+                if add_first:
+                    z_a = torch.concat([z_a, pssm_a], dim=2)
+                    z_b = torch.concat([z_a, pssm_b], dim=2)
+        if use_msa_bool and (not add_first):
+            cm, ph = model.map_predict(z_a, z_b, True, pssm_a, pssm_b)
+
+        else:
+            cm, ph = model.map_predict(z_a, z_b)
+
         p_hat.append(ph)
         c_map_mag.append(torch.mean(cm))
     p_hat = torch.stack(p_hat, 0)
@@ -262,7 +346,9 @@ def predict_cmap_interaction(model, n0, n1, tensors, use_cuda):
     return c_map_mag, p_hat
 
 
-def predict_interaction(model, n0, n1, tensors, use_cuda):
+def predict_interaction(
+    model, n0, n1, tensors, use_cuda, use_msa, add_first=True
+):
     """
     Predict whether a list of protein pairs will interact.
 
@@ -277,7 +363,9 @@ def predict_interaction(model, n0, n1, tensors, use_cuda):
     :param use_cuda: Whether to use GPU
     :type use_cuda: bool
     """
-    _, p_hat = predict_cmap_interaction(model, n0, n1, tensors, use_cuda)
+    _, p_hat = predict_cmap_interaction(
+        model, n0, n1, tensors, use_cuda, use_msa, add_first
+    )
     return p_hat
 
 
@@ -293,6 +381,8 @@ def interaction_grad(
     glider_map=None,
     glider_mat=None,
     use_cuda=True,
+    use_msa=[],
+    add_first=True,
 ):
     """
     Compute gradient and backpropagate loss for a batch.
@@ -325,7 +415,7 @@ def interaction_grad(
     """
 
     c_map_mag, p_hat = predict_cmap_interaction(
-        model, n0, n1, tensors, use_cuda
+        model, n0, n1, tensors, use_cuda, use_msa, add_first
     )
 
     if use_cuda:
@@ -381,7 +471,9 @@ def interaction_grad(
     return loss, correct, mse, b
 
 
-def interaction_eval(model, test_iterator, tensors, use_cuda):
+def interaction_eval(
+    model, test_iterator, tensors, use_cuda, use_msa, add_first=True
+):
     """
     Evaluate test data set performance.
 
@@ -401,7 +493,11 @@ def interaction_eval(model, test_iterator, tensors, use_cuda):
     true_y = []
 
     for n0, n1, y in test_iterator:
-        p_hat.append(predict_interaction(model, n0, n1, tensors, use_cuda))
+        p_hat.append(
+            predict_interaction(
+                model, n0, n1, tensors, use_cuda, use_msa, add_first
+            )
+        )
         true_y.append(y)
 
     y = torch.cat(true_y, 0)
@@ -446,10 +542,14 @@ def train_model(args, output):
     no_augment = args.no_augment
 
     embedding_h5 = args.embedding
-    # h5fi = h5py.File(embedding_h5, "r")
+    add_first = False
 
     train_df = pd.read_csv(train_fi, sep="\t", header=None)
     train_df.columns = ["prot1", "prot2", "label"]
+    use_msa = args.use_msa
+    if use_msa and args.msa_location is None:
+        raise ValueError("msa_location cannot be None")
+    use_msa = [use_msa, args.msa_location, args.af_msa]
 
     if no_augment:
         train_p1 = train_df["prot1"]
@@ -520,9 +620,11 @@ def train_model(args, output):
         glider_mat, glider_map = (None, None)
 
     if args.checkpoint is None:
-
         # Create embedding model
         input_dim = args.input_dim
+        if use_msa[0] and add_first:
+            input_dim += len(use_msa[3])
+
         projection_dim = args.projection_dim
         dropout_p = args.dropout_p
         embedding_model = FullyConnectedEmbed(
@@ -538,6 +640,9 @@ def train_model(args, output):
         log("Initializing contact model with:", file=output)
         log(f"\thidden_dim: {hidden_dim}", file=output)
         log(f"\tkernel_width: {kernel_width}", file=output)
+
+        if use_msa[0] and not add_first:
+            projection_dim += pssm_columns
 
         contact_model = ContactCNN(projection_dim, hidden_dim, kernel_width)
 
@@ -602,7 +707,6 @@ def train_model(args, output):
 
     N = len(train_iterator) * batch_size
     for epoch in range(num_epochs):
-
         model.train()
 
         n = 0
@@ -611,8 +715,7 @@ def train_model(args, output):
         mse_accum = 0
 
         # Train batches
-        for (z0, z1, y) in train_iterator:
-
+        for z0, z1, y in train_iterator:
             loss, correct, mse, b = interaction_grad(
                 model,
                 z0,
@@ -625,6 +728,8 @@ def train_model(args, output):
                 glider_map=glider_map,
                 glider_mat=glider_mat,
                 use_cuda=use_cuda,
+                use_msa=use_msa,
+                add_first=add_first,
             )
 
             n += b
@@ -658,7 +763,6 @@ def train_model(args, output):
         model.eval()
 
         with torch.no_grad():
-
             (
                 inter_loss,
                 inter_correct,
@@ -667,7 +771,9 @@ def train_model(args, output):
                 inter_re,
                 inter_f1,
                 inter_aupr,
-            ) = interaction_eval(model, test_iterator, embeddings, use_cuda)
+            ) = interaction_eval(
+                model, test_iterator, embeddings, use_cuda, use_msa, add_first
+            )
             tokens = [
                 epoch + 1,
                 num_epochs,
